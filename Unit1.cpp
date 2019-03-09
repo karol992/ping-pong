@@ -16,6 +16,7 @@ bool leftUpBoost = 0;
 bool leftDownBoost = 0;
 bool rightUpBoost = 0;
 bool rightDownBoost = 0;
+AnsiString lastPoint = "";
 
 void corner_hit() {
         v_y = -v_y;
@@ -134,6 +135,11 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
                 } else { //skucie
                         ball_moving->Enabled = false;
                         ball->Visible = false;
+                        AnsiString lastPoint = "Punkt dla gracza prawego >";
+                        winnerInfo->Caption = lastPoint;
+                        nowaGra->Visible = true;
+                        winnerInfo->Visible = true;
+                        return;
                 }
         }
 
@@ -168,6 +174,10 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
                 } else {
                         ball_moving->Enabled = false;
                         ball->Visible = false;
+                        AnsiString lastPoint = "< Punkt dla gracza lewego";
+                        winnerInfo->Caption = lastPoint;
+                        winnerInfo->Visible = true;
+                        nowaGra->Visible = true;
                         return;
                 }
         }
@@ -183,6 +193,7 @@ void __fastcall TForm1::nowaGraClick(TObject *Sender)
         ball->Visible = true;
         ball_moving->Enabled = true;
         nowaGra->Visible = false;
+        winnerInfo->Visible = false;
 }
 //---------------------------------------------------------------------------
 

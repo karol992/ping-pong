@@ -23,6 +23,7 @@ __published:	// IDE-managed Components
         TImage *ball;
         TTimer *ball_moving;
         TButton *nowaGra;
+        TLabel *winnerInfo;
         void __fastcall paddle1upTimer(TObject *Sender);
         void __fastcall paddle1downTimer(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
