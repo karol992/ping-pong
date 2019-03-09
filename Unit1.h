@@ -24,6 +24,9 @@ __published:	// IDE-managed Components
         TTimer *ball_moving;
         TButton *nowaGra;
         TLabel *winnerInfo;
+        TLabel *bouncesInfo;
+        TLabel *scoreTable;
+        TButton *nextRound;
         void __fastcall paddle1upTimer(TObject *Sender);
         void __fastcall paddle1downTimer(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
@@ -34,6 +37,7 @@ __published:	// IDE-managed Components
         void __fastcall paddle2downTimer(TObject *Sender);
         void __fastcall ball_movingTimer(TObject *Sender);
         void __fastcall nowaGraClick(TObject *Sender);
+        void __fastcall nextRoundClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
