@@ -1,24 +1,16 @@
-1. Ekran startowy 1096x463
-	a) label "powitanie",
-	b) pi³ka + paletki (bezruch).
-	c) button "nowa gra",
-
+1. Background 1096x463.
 2. Mechanika gry.
-	a) ruch pi³ki,
-	b) odbicia od œcian poziomych,
-	c) ruch paletek,
-	d) odbicie od paletek,
-		*licznik odbiæ,
-	e) skucie,
-		*licznik punktów
-	f) wyœwietlenie aktualnych wyników,
-	g) buttony,
-		*nastêpna gra,
-		 	-restart pi³ki
-		*"Nowa gra"
-			-okno z potwierdzeniem,
-			Czy na pewno chcesz zacz¹æ od nowa? (Tak/Nie)
+	a) paletki;
+	b) ruch paletek;
+	c) pi³ka;
+	d) ruch pi³ki;
+		-zliczanie odbiæ pi³ki w celu przyspieszania,
+		-odbicie na œrodku paletki przyspieszy v_y - ewolucja w praktyce;
+3. Tablice informacyjne.
+	a) button "nowa gra",
+		-ponowne zapytanie "Czy na pewno chcesz zacz¹æ od nowa? (Tak/Nie)" 
+	b) label "powitanie",
+	c) licznik punktów,
 
-3. Show message.
-
+4. Okno z informacjami wstêpnymi.
 
