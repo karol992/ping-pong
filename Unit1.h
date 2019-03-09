@@ -20,6 +20,7 @@ __published:	// IDE-managed Components
         TTimer *paddle1down;
         TTimer *paddle2up;
         TTimer *paddle2down;
+        TImage *Image1;
         void __fastcall paddle1upTimer(TObject *Sender);
         void __fastcall paddle1downTimer(TObject *Sender);
         void __fastcall FormKeyDown(TObject *Sender, WORD &Key,
