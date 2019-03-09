@@ -10,24 +10,53 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TForm1 *Form1;
-int v_x = +4;
-int v_y = -4;
+int v_x = -4;
+int v_y = 4;
 bool leftUpBoost = 0;
 bool leftDownBoost = 0;
 bool rightUpBoost = 0;
 bool rightDownBoost = 0;
+int leftPoints = 0;
+int rightPoints = 0;
+int ballBounces = 0;
+AnsiString playmaker = "left";
 
 void corner_hit() {
         v_y = -v_y;
         v_x = (-v_x/v_x)*abs(v_y);
 }
+void TForm1::loss() {
+        bouncesInfo->Caption = "Iloœæ odbiæ: " + IntToStr(ballBounces);
+        scoreTable->Caption = IntToStr(leftPoints) + ":" + IntToStr(rightPoints);
+        ball_moving->Enabled = false;
+        ball->Visible = false;
+        bouncesInfo->Visible = true;
+        nowaGra->Visible = true;
+        winnerInfo->Visible = true;
+        scoreTable->Visible = true;
+        nextRound->Visible = true;
+        ballBounces =0;
+}
+void TForm1::gameRefresh() {
+        ball->Top = background->Height/2 - ball->Height/2;
+        ball->Left = background->Width/2 - ball->Width/2;
+        ball->Enabled = true;
+        ball->Visible = true;
+        ball_moving->Enabled = true;
+        nowaGra->Visible = false;
+        winnerInfo->Visible = false;
+        bouncesInfo->Visible = false;
+        scoreTable->Visible = false;
+        nextRound->Visible = false;
+        ballBounces = 0;
+}
+
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
 }
 //---------------------------------------------------------------------------
-
 void __fastcall TForm1::paddle1upTimer(TObject *Sender)
 {
         if (paddle1->Top -10 > background->Top) paddle1 -> Top -= 10;
@@ -132,9 +161,13 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
                            && v_y > 0) {
                         v_x = -v_x;
                 } else { //skucie
-                        ball_moving->Enabled = false;
-                        ball->Visible = false;
+                        playmaker = "right";
+                        rightPoints++;
+                        winnerInfo->Caption = "Punkt dla gracza prawego >";
+                        loss();
+                        return;
                 }
+                ballBounces++;
         }
 
         //odbicie od prawej paletki
@@ -166,12 +199,34 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
                            && v_y > 0) {
                         v_x = -v_x;
                 } else {
-                        ball_moving->Enabled = false;
-                        ball->Visible = false;
+                        playmaker = "left";
+                        leftPoints++;
+                        winnerInfo->Caption = "< Punkt dla gracza lewego";
+                        loss();
                         return;
                 }
+                ballBounces++;
         }
         ball -> Left += v_x;
         ball -> Top += v_y;
 }
 //---------------------------------------------------------------------------
+void __fastcall TForm1::nowaGraClick(TObject *Sender)
+{
+        gameRefresh();
+        nowaGra->Default = false;
+        nextRound->Default = true;
+        v_y = 4;
+        v_x = -4;
+        leftPoints = 0;
+        rightPoints = 0;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::nextRoundClick(TObject *Sender)
+{
+        gameRefresh();
+        if (playmaker == "left") v_x = -4;
+        else v_x = 4;
+}
+//---------------------------------------------------------------------------
+
