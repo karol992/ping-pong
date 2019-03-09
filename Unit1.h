@@ -39,6 +39,8 @@ __published:	// IDE-managed Components
         void __fastcall nowaGraClick(TObject *Sender);
         void __fastcall nextRoundClick(TObject *Sender);
 private:	// User declarations
+        void loss();
+        void gameRefresh();
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
 };
