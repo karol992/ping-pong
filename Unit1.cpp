@@ -55,27 +55,25 @@ void TForm1::gameRefresh() {
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
-        char * startText = "Witaj w grze PingPong.\n\n"
+        Application -> MessageBox("Witaj w grze PingPong.\n\n"
         "Lewy gracz steruje wciskaj¹c klawisze A oraz Z.\n"
         "Prawy gracz steruje wciskaj¹c strza³ki do góry i w dó³.\n\n"
         "Dla urozmaicenia zabawy:\n"
-        "Kiedy odbijasz pi³kê paletk¹ w ruchu lub na jej œrodku, \n"
-        "wówczas zmienisz k¹t odbicia i prêdkoœæ pi³ki.\n"
-        "Mo¿esz dowolnie zmieniaæ pole gry.\n\n"
-        "Mi³ej zabawy!";
-        char * startTextCaption = "PingPong";
-        Application -> MessageBox(startText, startTextCaption, MB_OK);
+        "       *Kiedy odbijasz pi³kê paletk¹ w ruchu lub na jej œrodku, \n"
+        "        wówczas zmienisz k¹t odbicia i prêdkoœæ pi³ki.\n"
+        "       *Mo¿esz dowolnie zmieniaæ pole gry.\n\n"
+        "Mi³ej zabawy!", "PingPong", MB_OK);
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::paddle1upTimer(TObject *Sender)
 {
-        if (paddle1->Top -10 > background->Top) paddle1 -> Top -= 10;
+        if (paddle1->Top -10 > background->Top) paddle1 -> Top -= background->Height/50;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::paddle1downTimer(TObject *Sender)
 {
-        if (paddle1->Top +10 < background->Top + background -> Height - paddle1->Height) paddle1 -> Top += 10;
+        if (paddle1->Top +10 < background->Top + background -> Height - paddle1->Height) paddle1 -> Top += background->Height/50;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
@@ -122,12 +120,12 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
 //---------------------------------------------------------------------------
 void __fastcall TForm1::paddle2upTimer(TObject *Sender)
 {
-        if (paddle2->Top -10 > background->Top) paddle2 -> Top -= 10;
+        if (paddle2->Top -10 > background->Top) paddle2 -> Top -= background->Height/50;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::paddle2downTimer(TObject *Sender)
 {
-        if (paddle2->Top +10 < background->Top + background -> Height - paddle2->Height) paddle2 -> Top += 10;
+        if (paddle2->Top +10 < background->Top + background -> Height - paddle2->Height) paddle2 -> Top += background->Height/50;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ball_movingTimer(TObject *Sender)
@@ -142,7 +140,7 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         }
 
         //odbicie od lewej paletki
-        if (ball->Left <= paddle1->Left+paddle1->Width-10) {
+        if (ball->Left <= paddle1->Left+paddle1->Width-5) {
 
                 //boost na srodku paletki
                 if (abs(ball_center_x - paddle1_centre_x) < 50) {
@@ -181,7 +179,7 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         }
 
         //odbicie od prawej paletki
-        if (ball->Left + ball->Width >= paddle2->Left+10) {
+        if (ball->Left + ball->Width >= paddle2->Left+5) {
                 if (abs(ball_center_x - paddle2_centre_x) < 50) {
                         v_x +=1;
                 }
@@ -235,6 +233,7 @@ void __fastcall TForm1::nowaGraClick(TObject *Sender)
 void __fastcall TForm1::nextRoundClick(TObject *Sender)
 {
         gameRefresh();
+        v_y = 4;
         if (playmaker == "left") v_x = -4;
         else v_x = 4;
 }
