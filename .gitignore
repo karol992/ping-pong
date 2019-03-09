@@ -1,0 +1,6 @@
+example/
+*.exe
+*.obj
+*.tds
+*.~*
+*.dfm
