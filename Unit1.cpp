@@ -4,13 +4,18 @@
 #pragma hdrstop
 
 #include "Unit1.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TForm1 *Form1;
-int v_x = 4;
-int v_y = -4;
+int v_x = 3;
+int v_y = -3;
 
+void corner_hit() {
+        v_x = -v_x;
+        v_y = -v_y;
+}
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
@@ -59,28 +64,43 @@ void __fastcall TForm1::paddle2downTimer(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ball_movingTimer(TObject *Sender)
 {
+        int ball_radius = ball->Width/2;
+        int ball_center_x = ball->Top + ball_radius;
+        //int ball_center_y = ball->Left + ball_radius;
+
         if ((ball->Top <= background->Top) || (ball->Top >= background->Top + background->Height - ball->Height)) {
-                v_x = -v_x;
+                v_y = -v_y;
         }
         if (ball->Left <= paddle1->Left+paddle1->Width) {
-                if((ball->Top >= paddle1->Top - ball->Height/2)
-                && (ball->Top <= paddle1->Top+paddle1->Height + ball->Height/2)) {
-                        v_y = -v_y;
-                //} else if () {
+                if((ball_center_x >= paddle1->Top)
+                && (ball_center_x <= paddle1->Top+paddle1->Height)) {
+                        v_x = -v_x;
+                } else if ((ball_center_x + ball->Height/2 >= paddle1->Top)
+                           && (ball_center_x <= paddle1->Top) && v_y > 0) {
+                        corner_hit();
+                } else if ((ball_center_x >= paddle1->Top + paddle1->Height)
+                           && (ball->Top <= paddle1->Top + paddle1->Height + ball->Height) && v_y < 0) {
+                        corner_hit();
                 } else {
                         ball_moving->Enabled = false;
                 }
         }
 
         if (ball->Left >= paddle2->Left-paddle2->Width) {
-                if((ball->Top >= paddle2->Top - ball->Height/2)
-                && (ball->Top <= paddle2->Top+paddle1->Height + ball->Height/2)) {
-                        v_y = -v_y;
+                if((ball_center_x >= paddle2->Top )
+                && (ball_center_x <= paddle2->Top+paddle2->Height)) {
+                        v_x = -v_x;
+                }  else if ((ball_center_x + ball->Height/2 >= paddle2->Top)
+                           && (ball_center_x <= paddle2->Top) && v_y > 0) {
+                        corner_hit();
+                } else if ((ball_center_x >= paddle2->Top + paddle2->Height)
+                           && (ball->Top <= paddle2->Top + paddle2->Height + ball->Height) && v_y < 0) {
+                        corner_hit();
                 } else {
                         ball_moving->Enabled = false;
                 }
         }
-        ball -> Top += v_x;
-        ball -> Left += v_y;
+        ball -> Left += v_x;
+        ball -> Top += v_y;
 }
 //---------------------------------------------------------------------------
