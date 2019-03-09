@@ -175,3 +175,14 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         ball -> Top += v_y;
 }
 //---------------------------------------------------------------------------
+void __fastcall TForm1::nowaGraClick(TObject *Sender)
+{
+        ball->Top = background->Height/2 - ball->Height/2;
+        ball->Left = background->Width/2 - ball->Width/2;
+        ball->Enabled = true;
+        ball->Visible = true;
+        ball_moving->Enabled = true;
+        nowaGra->Visible = false;
+}
+//---------------------------------------------------------------------------
+
