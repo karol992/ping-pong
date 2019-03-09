@@ -14,4 +14,43 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 {
 }
 //---------------------------------------------------------------------------
- 
+
+void __fastcall TForm1::paddle1upTimer(TObject *Sender)
+{
+        if (paddle1->Top -10 > background->Top) paddle1 -> Top -= 10;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::paddle1downTimer(TObject *Sender)
+{
+        if (paddle1->Top +10 < background->Top + background -> Height - paddle1->Height) paddle1 -> Top += 10;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+        if (Key == 'A') paddle1up -> Enabled = true;
+        if (Key == 'Z') paddle1down -> Enabled = true;
+        if (Key == VK_UP) paddle2up -> Enabled = true;
+        if (Key == VK_DOWN) paddle2down -> Enabled = true;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
+      TShiftState Shift)
+{
+        if (Key == 'A') paddle1up -> Enabled = false;
+        if (Key == 'Z') paddle1down -> Enabled = false;
+        if (Key == VK_UP) paddle2up -> Enabled = false;
+        if (Key == VK_DOWN) paddle2down -> Enabled = false;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::paddle2upTimer(TObject *Sender)
+{
+        if (paddle2->Top -10 > background->Top) paddle2 -> Top -= 10;
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::paddle2downTimer(TObject *Sender)
+{
+        if (paddle2->Top +10 < background->Top + background -> Height - paddle2->Height) paddle2 -> Top += 10;
+}
+//---------------------------------------------------------------------------
