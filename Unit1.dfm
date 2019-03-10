@@ -30,11 +30,11 @@ object Form1: TForm1
     Brush.Color = clMedGray
   end
   object ball: TImage
-    Left = 0
-    Top = 0
-    Width = 1080
-    Height = 462
-    Align = alClient
+    Left = 520
+    Top = 216
+    Width = 32
+    Height = 32
+    Anchors = []
     AutoSize = True
     Center = True
     Enabled = False
@@ -992,9 +992,9 @@ object Form1: TForm1
     Height = 73
     Cursor = crHandPoint
     Anchors = []
-    Caption = 'Nast'#281'pna runda >'
+    Caption = 'Nastêpna runda >'
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clGreen
+    Font.Color = clLime
     Font.Height = -23
     Font.Name = 'MS Sans Serif'
     Font.Style = []
