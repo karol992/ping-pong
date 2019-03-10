@@ -1,6 +1,6 @@
 example/
 *.exe
-*.obj
-*.tds
+//*.obj
+//*.tds
 *.~*
-*.dfm
+//*.dfm
