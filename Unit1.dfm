@@ -140,7 +140,7 @@ object Form1: TForm1
       C3C3}
     Transparent = True
   end
-  object paddle2: TImage
+  object paddleRight: TImage
     Left = 1026
     Top = 131
     Width = 20
@@ -528,7 +528,7 @@ object Form1: TForm1
       FFFF}
     Transparent = True
   end
-  object paddle1: TImage
+  object paddleLeft: TImage
     Left = 50
     Top = 131
     Width = 20
@@ -967,14 +967,14 @@ object Form1: TForm1
     Layout = tlCenter
     Visible = False
   end
-  object nowaGra: TButton
+  object newGame: TButton
     Left = 328
     Top = 367
     Width = 417
     Height = 73
     Cursor = crHandPoint
     Anchors = []
-    Caption = 'Nowa gra'
+    Caption = 'Nowa Gra'
     Default = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -983,7 +983,7 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
     TabOrder = 0
-    OnClick = nowaGraClick
+    OnClick = newGameClick
   end
   object nextRound: TButton
     Left = 328
@@ -1003,38 +1003,38 @@ object Form1: TForm1
     Visible = False
     OnClick = nextRoundClick
   end
-  object paddle1up: TTimer
+  object paddleLeftUp: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = paddle1upTimer
+    OnTimer = paddleLeftUpTimer
     Left = 48
     Top = 88
   end
-  object paddle1down: TTimer
+  object paddleLeftDown: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = paddle1downTimer
+    OnTimer = paddleLeftDownTimer
     Left = 48
     Top = 336
   end
-  object paddle2up: TTimer
+  object paddleRightUp: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = paddle2upTimer
+    OnTimer = paddleRightUpTimer
     Left = 1016
     Top = 72
   end
-  object paddle2down: TTimer
+  object paddleRightDown: TTimer
     Enabled = False
     Interval = 20
-    OnTimer = paddle2downTimer
+    OnTimer = paddleRightDownTimer
     Left = 1032
     Top = 360
   end
-  object ball_moving: TTimer
+  object ballMoving: TTimer
     Enabled = False
     Interval = 1
-    OnTimer = ball_movingTimer
+    OnTimer = ballMovingTimer
     Left = 272
     Top = 168
   end

@@ -13,7 +13,7 @@ TForm1 *Form1;
 //sk³adowe szybkoœci pi³ki
 int v_x = -4;
 int v_y = 4;
-//bool'e do wykrywania ruchu paletki podczas odbicia
+//bool'e do wykrywania ruchu paletki podczas odbicia w celu przyspieszenia v_y
 bool leftUpBoost = 0;
 bool leftDownBoost = 0;
 bool rightUpBoost = 0;
@@ -22,9 +22,9 @@ bool rightDownBoost = 0;
 int leftPoints = 0;
 int rightPoints = 0;
 int ballBounces = 0;
-AnsiString playmaker = "left";
+AnsiString servingPlayer = "left";
 
-void corner_hit() {
+void TForm1::cornerHit() {
         int pom = v_x;
         if (v_x * v_y >= 0) {
                 v_x = -v_y;
@@ -37,10 +37,10 @@ void corner_hit() {
 void TForm1::loss() {
         bouncesInfo->Caption = "Iloœæ odbiæ: " + IntToStr(ballBounces);
         scoreTable->Caption = IntToStr(leftPoints) + ":" + IntToStr(rightPoints);
-        ball_moving->Enabled = false;
+        ballMoving->Enabled = false;
         ball->Visible = false;
         bouncesInfo->Visible = true;
-        nowaGra->Visible = true;
+        newGame->Visible = true;
         winnerInfo->Visible = true;
         scoreTable->Visible = true;
         nextRound->Default = true;
@@ -53,8 +53,8 @@ void TForm1::gameRefresh() {
         ball->Left = background->Width/2 - ball->Width/2;
         ball->Enabled = true;
         ball->Visible = true;
-        ball_moving->Enabled = true;
-        nowaGra->Visible = false;
+        ballMoving->Enabled = true;
+        newGame->Visible = false;
         winnerInfo->Visible = false;
         bouncesInfo->Visible = false;
         scoreTable->Visible = false;
@@ -75,34 +75,34 @@ __fastcall TForm1::TForm1(TComponent* Owner)
         "Mi³ej zabawy!", "PingPong", MB_OK);
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::paddle1upTimer(TObject *Sender)
+void __fastcall TForm1::paddleLeftUpTimer(TObject *Sender)
 {
-        if (paddle1->Top -10 > background->Top) paddle1 -> Top -= background->Height/50;
+        if (paddleLeft->Top -10 > background->Top) paddleLeft -> Top -= background->Height/50;
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::paddle1downTimer(TObject *Sender)
+void __fastcall TForm1::paddleLeftDownTimer(TObject *Sender)
 {
-        if (paddle1->Top +10 < background->Top + background -> Height - paddle1->Height) paddle1 -> Top += background->Height/50;
+        if (paddleLeft->Top +10 < background->Top + background -> Height - paddleLeft->Height) paddleLeft -> Top += background->Height/50;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormKeyDown(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
         if (Key == 'A') {
-                paddle1up -> Enabled = true;
+                paddleLeftUp -> Enabled = true;
                 leftUpBoost = true;
         }
         if (Key == 'Z') {
-                paddle1down -> Enabled = true;
+                paddleLeftDown -> Enabled = true;
                 leftDownBoost = true;
         }
         if (Key == VK_UP) {
-                paddle2up -> Enabled = true;
+                paddleRightUp -> Enabled = true;
                 rightUpBoost = true;
         }
         if (Key == VK_DOWN) {
-                paddle2down -> Enabled = true;
+                paddleRightDown -> Enabled = true;
                 rightDownBoost = true;
         }
 }
@@ -111,38 +111,38 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
 {
         if (Key == 'A') {
-                paddle1up -> Enabled = false;
+                paddleLeftUp -> Enabled = false;
                 leftUpBoost = false;
         }
         if (Key == 'Z') {
-                paddle1down -> Enabled = false;
+                paddleLeftDown -> Enabled = false;
                 leftDownBoost = false;
         }
         if (Key == VK_UP) {
-                paddle2up -> Enabled = false;
+                paddleRightUp -> Enabled = false;
                 rightUpBoost = false;
         }
         if (Key == VK_DOWN) {
-                paddle2down -> Enabled = false;
+                paddleRightDown -> Enabled = false;
                 rightDownBoost = false;
         }
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::paddle2upTimer(TObject *Sender)
+void __fastcall TForm1::paddleRightUpTimer(TObject *Sender)
 {
-        if (paddle2->Top -10 > background->Top) paddle2 -> Top -= background->Height/50;
+        if (paddleRight->Top -10 > background->Top) paddleRight -> Top -= background->Height/50;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::paddle2downTimer(TObject *Sender)
+void __fastcall TForm1::paddleRightDownTimer(TObject *Sender)
 {
-        if (paddle2->Top +10 < background->Top + background -> Height - paddle2->Height) paddle2 -> Top += background->Height/50;
+        if (paddleRight->Top +10 < background->Top + background -> Height - paddleRight->Height) paddleRight -> Top += background->Height/50;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::ball_movingTimer(TObject *Sender)
+void __fastcall TForm1::ballMovingTimer(TObject *Sender)
 {
-        int ball_center_x = ball->Top + ball->Width/2;
-        int paddle1_centre_x = paddle1->Top + paddle1->Height/2;
-        int paddle2_centre_x = paddle2->Top + paddle2->Height/2;
+        int ballCenterX = ball->Top + ball->Width/2;
+        int LeftPaddleCenterX = paddleLeft->Top + paddleLeft->Height/2;
+        int RightPaddleCenterX = paddleRight->Top + paddleRight->Height/2;
 
         //odbicie od gornej i dolnej sciany
         if ((ball->Top <= background->Top) || (ball->Top >= background->Top + background->Height - ball->Height)) {
@@ -150,42 +150,42 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         }
 
         //odbicie od lewej paletki
-        if (ball->Left >= paddle1->Left
-            && ball->Left <= paddle1->Left + paddle1->Width
-            && ball->Top >= paddle1->Top - ball->Height/2
-            && ball->Top <= paddle1->Top + paddle1->Height - ball->Height/2) {
+        if (ball->Left >= paddleLeft->Left
+            && ball->Left <= paddleLeft->Left + paddleLeft->Width
+            && ball->Top >= paddleLeft->Top - ball->Height/2
+            && ball->Top <= paddleLeft->Top + paddleLeft->Height - ball->Height/2) {
             v_x = -v_x;
             ballBounces++;
             //boost na srodku paletki
-            if (abs(ball_center_x - paddle1_centre_x) < 50) {
+            if (abs(ballCenterX - LeftPaddleCenterX) < 50) {
                 v_x +=1;
             }
             if (leftUpBoost) v_y -= 1; //przyspieszenie przy ruchu
             if (leftDownBoost) v_y += 1;
         }
         //odbicie od rogów lewej paletki
-        if (ball->Left >= paddle1->Left
-            && ball->Left <= paddle1->Left + paddle1->Width
-            && ((v_y >= 0 && (ball->Top < paddle1->Top - ball->Height/2)
-                && (ball->Top >= paddle1->Top - ball->Height))
-                || (v_y <= 0 && (ball->Top > paddle1->Top + paddle1->Height - ball->Height/2)
-                && (ball->Top <= paddle1->Top + paddle1->Height)))) {
-            corner_hit();
+        if (ball->Left >= paddleLeft->Left
+            && ball->Left <= paddleLeft->Left + paddleLeft->Width
+            && ((v_y >= 0 && (ball->Top < paddleLeft->Top - ball->Height/2)
+                && (ball->Top >= paddleLeft->Top - ball->Height))
+                || (v_y <= 0 && (ball->Top > paddleLeft->Top + paddleLeft->Height - ball->Height/2)
+                && (ball->Top <= paddleLeft->Top + paddleLeft->Height)))) {
+            cornerHit();
             ballBounces++;
         }
         //odbicie od górnej lub dolnej œcianki paletki
-        if (ball->Left < paddle1->Left
-            && ball->Left >= paddle1->Left - paddle1->Width
-            && (((ball->Top <= paddle1->Top - ball->Height/2)
-                && (ball->Top >= paddle1->Top - ball->Height))
-                || ((ball->Top >= paddle1->Top + paddle1->Height - ball->Height/2)
-                && (ball->Top <= paddle1->Top + paddle1->Height)))) {
+        if (ball->Left < paddleLeft->Left
+            && ball->Left >= paddleLeft->Left - paddleLeft->Width
+            && (((ball->Top <= paddleLeft->Top - ball->Height/2)
+                && (ball->Top >= paddleLeft->Top - ball->Height))
+                || ((ball->Top >= paddleLeft->Top + paddleLeft->Height - ball->Height/2)
+                && (ball->Top <= paddleLeft->Top + paddleLeft->Height)))) {
             v_y = -v_y;
             ballBounces++;
         }
         //skucie po lewej stronie
         if (ball->Left < background->Left) {
-                playmaker = "right";
+                servingPlayer = "right";
                 rightPoints++;
                 winnerInfo->Caption = "Punkt dla gracza prawego >";
                 loss();
@@ -194,42 +194,42 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         //----------------------------------------------------------------------
 
         //odbicie od prawej paletki
-        if (ball->Left + ball->Width >= paddle2->Left
-            && ball->Left + ball->Width <= paddle2->Left + paddle2->Width
-            && ball->Top >= paddle2->Top - ball->Height/2
-            && ball->Top <= paddle2->Top + paddle2->Height - ball->Height/2) {
+        if (ball->Left + ball->Width >= paddleRight->Left
+            && ball->Left + ball->Width <= paddleRight->Left + paddleRight->Width
+            && ball->Top >= paddleRight->Top - ball->Height/2
+            && ball->Top <= paddleRight->Top + paddleRight->Height - ball->Height/2) {
             v_x = -v_x;
             ballBounces++;
             //boost na srodku paletki
-            if (abs(ball_center_x - paddle2_centre_x) < 50) {
+            if (abs(ballCenterX - RightPaddleCenterX) < 50) {
                 v_x -=1;
             }
             if (leftUpBoost) v_y -= 1; //przyspieszenie przy ruchu
             if (leftDownBoost) v_y += 1;
         }
         //odbicie od rogów prawej paletki
-        if (ball->Left + ball->Width >= paddle2->Left
-            && ball->Left + ball->Width <= paddle2->Left + paddle2->Width
-            && ((v_y >= 0 && (ball->Top < paddle2->Top - ball->Height/2)
-                && (ball->Top >= paddle2->Top - ball->Height))
-                || (v_y <= 0 &&(ball->Top > paddle2->Top + paddle2->Height - ball->Height/2)
-                && (ball->Top <= paddle2->Top + paddle2->Height)))) {
-            corner_hit();
+        if (ball->Left + ball->Width >= paddleRight->Left
+            && ball->Left + ball->Width <= paddleRight->Left + paddleRight->Width
+            && ((v_y >= 0 && (ball->Top < paddleRight->Top - ball->Height/2)
+                && (ball->Top >= paddleRight->Top - ball->Height))
+                || (v_y <= 0 &&(ball->Top > paddleRight->Top + paddleRight->Height - ball->Height/2)
+                && (ball->Top <= paddleRight->Top + paddleRight->Height)))) {
+            cornerHit();
             ballBounces++;
         }
         //odbicie od górnej lub dolnej œcianki paletki
-        if (ball->Left + ball->Width > paddle2->Left + paddle2->Width
-            && ball->Left + ball->Width <= paddle2->Left + paddle2->Width*2
-            && (((ball->Top <= paddle2->Top - ball->Height/2)
-                && (ball->Top >= paddle2->Top - ball->Height))
-                || ((ball->Top >= paddle2->Top + paddle2->Height - ball->Height/2)
-                && (ball->Top <= paddle2->Top + paddle2->Height)))) {
+        if (ball->Left + ball->Width > paddleRight->Left + paddleRight->Width
+            && ball->Left + ball->Width <= paddleRight->Left + paddleRight->Width*2
+            && (((ball->Top <= paddleRight->Top - ball->Height/2)
+                && (ball->Top >= paddleRight->Top - ball->Height))
+                || ((ball->Top >= paddleRight->Top + paddleRight->Height - ball->Height/2)
+                && (ball->Top <= paddleRight->Top + paddleRight->Height)))) {
             v_y = -v_y;
             ballBounces++;
         }
         //skucie po prawej stronie
         if (ball->Left + ball->Width > background->Left + background->Width) {
-                playmaker = "left";
+                servingPlayer = "left";
                 leftPoints++;
                 winnerInfo->Caption = "< Punkt dla gracza lewego";
                 loss();
@@ -240,10 +240,10 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         ball -> Top += v_y;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::nowaGraClick(TObject *Sender)
+void __fastcall TForm1::newGameClick(TObject *Sender)
 {
         gameRefresh();
-        nowaGra->Default = false;
+        newGame->Default = false;
         v_y = -4;
         v_x = -4;
         leftPoints = 0;
@@ -254,7 +254,7 @@ void __fastcall TForm1::nextRoundClick(TObject *Sender)
 {
         gameRefresh();
         v_y = 4;
-        if (playmaker == "left") v_x = -4;
+        if (servingPlayer == "left") v_x = -4;
         else v_x = 4;
 }
 //---------------------------------------------------------------------------
