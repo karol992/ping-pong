@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 147
-  Top = 141
+  Left = 250
+  Top = 171
   AutoScroll = False
   Caption = 'Form1'
   ClientHeight = 462
@@ -992,7 +992,7 @@ object Form1: TForm1
     Height = 73
     Cursor = crHandPoint
     Anchors = []
-    Caption = 'Nastêpna runda >'
+    Caption = 'Nast'#281'pna runda >'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clLime
     Font.Height = -23

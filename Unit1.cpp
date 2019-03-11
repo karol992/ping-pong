@@ -10,20 +10,29 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TForm1 *Form1;
+//sk³adowe szybkoœci pi³ki
 int v_x = -4;
 int v_y = 4;
+//bool'e do wykrywania ruchu paletki podczas odbicia
 bool leftUpBoost = 0;
 bool leftDownBoost = 0;
 bool rightUpBoost = 0;
 bool rightDownBoost = 0;
+//-----------------------
 int leftPoints = 0;
 int rightPoints = 0;
 int ballBounces = 0;
 AnsiString playmaker = "left";
 
 void corner_hit() {
-        v_y = -v_y;
-        v_x = (-v_x/v_x)*abs(v_y);
+        int pom = v_x;
+        if (v_x * v_y >= 0) {
+                v_x = -v_y;
+                v_y = -pom;
+        } else if (v_x *v_y < 0) {
+                v_x = v_y;
+                v_y = pom;
+        }
 }
 void TForm1::loss() {
         bouncesInfo->Caption = "Iloœæ odbiæ: " + IntToStr(ballBounces);
@@ -34,8 +43,10 @@ void TForm1::loss() {
         nowaGra->Visible = true;
         winnerInfo->Visible = true;
         scoreTable->Visible = true;
+        nextRound->Default = true;
         nextRound->Visible = true;
-        ballBounces =0;
+        ballBounces = 0;
+
 }
 void TForm1::gameRefresh() {
         ball->Top = background->Height/2 - ball->Height/2;
@@ -48,7 +59,6 @@ void TForm1::gameRefresh() {
         bouncesInfo->Visible = false;
         scoreTable->Visible = false;
         nextRound->Visible = false;
-        ballBounces = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -140,81 +150,92 @@ void __fastcall TForm1::ball_movingTimer(TObject *Sender)
         }
 
         //odbicie od lewej paletki
-        if (ball->Left <= paddle1->Left+paddle1->Width-5) {
-
-                //boost na srodku paletki
-                if (abs(ball_center_x - paddle1_centre_x) < 50) {
-                        v_x -=1;
-                }
-                if (leftUpBoost) v_y -= 1;
-                if (leftDownBoost) v_y += 1;
-
-                if((ball_center_x >= paddle1->Top)
-                && (ball_center_x <= paddle1->Top+paddle1->Height)) {
-                        v_x = -v_x;
-                } else if ((ball_center_x + ball->Height/2 >= paddle1->Top) //odbicie od gornego rogu
-                           && (ball_center_x <= paddle1->Top)
-                           && v_y > 0) {
-                        corner_hit();
-                } else if ((ball_center_x + ball->Height/2 >= paddle1->Top) //odbicie od gornego rogu
-                           && (ball_center_x <= paddle1->Top)
-                           && v_y < 0) {
-                        v_x = -v_x;
-                } else if ((ball_center_x >= paddle1->Top + paddle1->Height) //odbicie od dolnego rogu
-                           && (ball_center_x <= paddle1->Top + paddle1->Height + ball->Height/2)
-                           && v_y < 0) {
-                        corner_hit();
-                } else if ((ball_center_x >= paddle1->Top + paddle1->Height) //odbicie od dolnego rogu
-                           && (ball_center_x <= paddle1->Top + paddle1->Height + ball->Height/2)
-                           && v_y > 0) {
-                        v_x = -v_x;
-                } else { //skucie
-                        playmaker = "right";
-                        rightPoints++;
-                        winnerInfo->Caption = "Punkt dla gracza prawego >";
-                        loss();
-                        return;
-                }
-                ballBounces++;
+        if (ball->Left >= paddle1->Left
+            && ball->Left <= paddle1->Left + paddle1->Width
+            && ball->Top >= paddle1->Top - ball->Height/2
+            && ball->Top <= paddle1->Top + paddle1->Height - ball->Height/2) {
+            v_x = -v_x;
+            ballBounces++;
+            //boost na srodku paletki
+            if (abs(ball_center_x - paddle1_centre_x) < 50) {
+                v_x +=1;
+            }
+            if (leftUpBoost) v_y -= 1; //przyspieszenie przy ruchu
+            if (leftDownBoost) v_y += 1;
         }
+        //odbicie od rogów lewej paletki
+        if (ball->Left >= paddle1->Left
+            && ball->Left <= paddle1->Left + paddle1->Width
+            && ((v_y >= 0 && (ball->Top < paddle1->Top - ball->Height/2)
+                && (ball->Top >= paddle1->Top - ball->Height))
+                || (v_y <= 0 && (ball->Top > paddle1->Top + paddle1->Height - ball->Height/2)
+                && (ball->Top <= paddle1->Top + paddle1->Height)))) {
+            corner_hit();
+            ballBounces++;
+        }
+        //odbicie od górnej lub dolnej œcianki paletki
+        if (ball->Left < paddle1->Left
+            && ball->Left >= paddle1->Left - paddle1->Width
+            && (((ball->Top <= paddle1->Top - ball->Height/2)
+                && (ball->Top >= paddle1->Top - ball->Height))
+                || ((ball->Top >= paddle1->Top + paddle1->Height - ball->Height/2)
+                && (ball->Top <= paddle1->Top + paddle1->Height)))) {
+            v_y = -v_y;
+            ballBounces++;
+        }
+        //skucie po lewej stronie
+        if (ball->Left < background->Left) {
+                playmaker = "right";
+                rightPoints++;
+                winnerInfo->Caption = "Punkt dla gracza prawego >";
+                loss();
+                return;
+        }
+        //----------------------------------------------------------------------
 
         //odbicie od prawej paletki
-        if (ball->Left + ball->Width >= paddle2->Left+5) {
-                if (abs(ball_center_x - paddle2_centre_x) < 50) {
-                        v_x +=1;
-                }
-                if (rightUpBoost) v_y -= 1;
-                if (rightDownBoost) v_y += 1;
-
-
-                if((ball_center_x >= paddle2->Top ) //
-                && (ball_center_x <= paddle2->Top+paddle2->Height)) {
-                        v_x = -v_x;
-                } else if ((ball_center_x + ball->Height/2 >= paddle2->Top)
-                           && (ball_center_x <= paddle2->Top)
-                           && v_y > 0) {
-                        corner_hit();
-                } else if ((ball_center_x + ball->Height/2 >= paddle2->Top)
-                           && (ball_center_x <= paddle2->Top)
-                           && v_y < 0) {
-                        v_x = -v_x;
-                } else if ((ball_center_x >= paddle2->Top + paddle2->Height)
-                           && (ball_center_x <= paddle2->Top + paddle2->Height + ball->Height/2)
-                           && v_y < 0) {
-                        corner_hit();
-                } else if ((ball_center_x >= paddle2->Top + paddle2->Height)
-                           && (ball_center_x <= paddle2->Top + paddle2->Height + ball->Height/2)
-                           && v_y > 0) {
-                        v_x = -v_x;
-                } else {
-                        playmaker = "left";
-                        leftPoints++;
-                        winnerInfo->Caption = "< Punkt dla gracza lewego";
-                        loss();
-                        return;
-                }
-                ballBounces++;
+        if (ball->Left + ball->Width >= paddle2->Left
+            && ball->Left + ball->Width <= paddle2->Left + paddle2->Width
+            && ball->Top >= paddle2->Top - ball->Height/2
+            && ball->Top <= paddle2->Top + paddle2->Height - ball->Height/2) {
+            v_x = -v_x;
+            ballBounces++;
+            //boost na srodku paletki
+            if (abs(ball_center_x - paddle2_centre_x) < 50) {
+                v_x -=1;
+            }
+            if (leftUpBoost) v_y -= 1; //przyspieszenie przy ruchu
+            if (leftDownBoost) v_y += 1;
         }
+        //odbicie od rogów prawej paletki
+        if (ball->Left + ball->Width >= paddle2->Left
+            && ball->Left + ball->Width <= paddle2->Left + paddle2->Width
+            && ((v_y >= 0 && (ball->Top < paddle2->Top - ball->Height/2)
+                && (ball->Top >= paddle2->Top - ball->Height))
+                || (v_y <= 0 &&(ball->Top > paddle2->Top + paddle2->Height - ball->Height/2)
+                && (ball->Top <= paddle2->Top + paddle2->Height)))) {
+            corner_hit();
+            ballBounces++;
+        }
+        //odbicie od górnej lub dolnej œcianki paletki
+        if (ball->Left + ball->Width > paddle2->Left + paddle2->Width
+            && ball->Left + ball->Width <= paddle2->Left + paddle2->Width*2
+            && (((ball->Top <= paddle2->Top - ball->Height/2)
+                && (ball->Top >= paddle2->Top - ball->Height))
+                || ((ball->Top >= paddle2->Top + paddle2->Height - ball->Height/2)
+                && (ball->Top <= paddle2->Top + paddle2->Height)))) {
+            v_y = -v_y;
+            ballBounces++;
+        }
+        //skucie po prawej stronie
+        if (ball->Left + ball->Width > background->Left + background->Width) {
+                playmaker = "left";
+                leftPoints++;
+                winnerInfo->Caption = "< Punkt dla gracza lewego";
+                loss();
+                return;
+        }
+        //----------------------------------------------------------------------
         ball -> Left += v_x;
         ball -> Top += v_y;
 }
@@ -223,8 +244,7 @@ void __fastcall TForm1::nowaGraClick(TObject *Sender)
 {
         gameRefresh();
         nowaGra->Default = false;
-        nextRound->Default = true;
-        v_y = 4;
+        v_y = -4;
         v_x = -4;
         leftPoints = 0;
         rightPoints = 0;
@@ -238,4 +258,5 @@ void __fastcall TForm1::nextRoundClick(TObject *Sender)
         else v_x = 4;
 }
 //---------------------------------------------------------------------------
+
 
